@@ -1,0 +1,62 @@
+{
+    "appKeys": {
+        "batterybarstyle": 7,
+        "btdisalert": 4,
+        "btrealert": 5,
+        "covertext": 3,
+        "hidebattery": 0,
+        "hidebticon": 1,
+        "showminute": 8,
+        "theme": 2,
+        "wfupdate": 6
+    },
+    "capabilities": [
+        "configurable"
+    ],
+    "companyName": "Edwin & Philipp",
+    "longName": "RLR",
+    "projectType": "native",
+    "resources": {
+        "media": [
+            {
+                "file": "images/menu_icon-RLR.png",
+                "menuIcon": true,
+                "name": "IMAGE_MENU_ICON",
+                "type": "png"
+            },
+            {
+                "file": "images/bt-icon-fixed.png",
+                "name": "IMAGE_BT_ICON",
+                "type": "png"
+            },
+            {
+                "file": "images/BT-Black.png",
+                "name": "IMAGE_BT_BLACK",
+                "type": "png"
+            },
+            {
+                "characterRegex": "[0-9]",
+                "file": "fonts/impact.ttf",
+                "name": "FONT_IMPACT_35",
+                "type": "font"
+            },
+            {
+                "file": "images/Container-Black.png",
+                "name": "IMAGE_BASE",
+                "type": "png"
+            },
+            {
+                "file": "fonts/pixelmix.ttf",
+                "name": "FONT_PIXELMIX_6",
+                "type": "font"
+            }
+        ]
+    },
+    "shortName": "RLR",
+    "uuid": "31c2b740-69ae-483c-936c-5bdb4b5f2cad",
+    "versionCode": 1,
+    "versionLabel": "1.0.1-b4_rel",
+    "watchapp": {
+        "watchface": true
+    }
+}
