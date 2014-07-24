@@ -3,9 +3,11 @@
         "batterybarstyle": 7,
         "btdisalert": 4,
         "btrealert": 5,
+        "cleanerlook": 10,
         "covertext": 3,
         "hidebattery": 0,
         "hidebticon": 1,
+        "lang": 9,
         "showminute": 8,
         "theme": 2,
         "wfupdate": 6
@@ -55,7 +57,7 @@
     "shortName": "RLR",
     "uuid": "31c2b740-69ae-483c-936c-5bdb4b5f2cad",
     "versionCode": 1,
-    "versionLabel": "1.0.1-b4_rel",
+    "versionLabel": "1.1.0-b1_beta",
     "watchapp": {
         "watchface": true
     }

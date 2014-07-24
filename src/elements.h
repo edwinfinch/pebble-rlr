@@ -58,6 +58,8 @@ typedef struct persist {
 	bool theme;
 	bool showactualmin;
 	bool batterybarstyle;
+	uint8_t lang;
+	bool cleanerlook;
 }persist;
 
 persist settings = {
@@ -68,17 +70,49 @@ persist settings = {
 	.theme = 1,
 	.showactualmin = 0,
 	.batterybarstyle = 0,
+	.lang = 0,
+	.cleanerlook = 0,
 };
 
 //Glance values, I think?
 int persistvalue;
-int currentAppVer = 3;
+int currentAppVer = 4;
 bool currentlyGlancing = 0;
 int versionChecked = 0;
 GRect finish01, start02;
 bool booted = 0;
 int boot = 0;
 char glance_buffer[200];
+
+char *months[2][12] = {
+	{
+		"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"
+	},
+	{
+		"Jan", "Feb", "Mär", "Apr", "Mai", "Jun", "Jul", "Aug", "Sept", "Okt", "Nov", "Dez"
+	},
+};
+
+char *days[2][7] = {
+	{
+		"Sunday", "Monday", "Tuesday", "Wed.", "Thursday", "Friday", "Saturday",
+	},
+	{
+		"Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag",
+	},
+};
+
+#define HIDEBATTERY_KEY 0
+#define HIDEBTICON_KEY 1
+#define THEME_KEY 2
+#define COVERTEXT_KEY 3
+#define BTDISALERT_KEY 4
+#define BTREALERT_KEY 5
+#define WATCHAPPVER_KEY 6
+#define BATTERYBARSTYLE_KEY 7
+#define SHOWMINUTE_KEY 8
+#define LANGUAGE_KEY 9
+#define CLEARNERLOOK_KEY 10
 
 /*
 GRect locations[10] = {

@@ -1,6 +1,5 @@
 #include <pebble.h>
 #include "elements.h"
-#include "appkeys.h"
 void bt_handler(bool connected);
 void battery_handler(BatteryChargeState batt_charge);
 
@@ -140,6 +139,9 @@ void process_tuple(Tuple *t)
 				}
 			versionChecked = 1;
 		  }
+	  	break;
+	  case LANGUAGE_KEY:
+	  	settings.lang = value;
 	  	break;
   }
 }
@@ -353,6 +355,8 @@ void hide_colliding_layers(){
 }
 
 void tick_handler(struct tm *t, TimeUnits units_changed){
+	static char year_buffer[] = "'01";
+	
 	minute = t->tm_min;
 	if(clock_is_24h_style()){
 		strftime(hourBuffer, sizeof(hourBuffer), "%H", t);
@@ -360,8 +364,16 @@ void tick_handler(struct tm *t, TimeUnits units_changed){
 	else{
 		strftime(hourBuffer,sizeof(hourBuffer),"%I", t);
 	}
-	strftime(day_buffer, sizeof(day_buffer), "%A", t);
-	strftime(month_buffer, sizeof(month_buffer), "%d %B '%y", t);
+	int day = t->tm_wday;
+	snprintf(day_buffer, sizeof(day_buffer), "%s", days[settings.lang][day]);
+	
+	int daym = t->tm_mday;
+	int month = t->tm_mon;
+	
+	//For some weird reason struct tm doesn't seem to include the year, so let's make a buffer for it
+	strftime(year_buffer, sizeof(year_buffer), "'%y", t);
+	
+	snprintf(month_buffer, sizeof(month_buffer), "%d %s. %s", daym, months[settings.lang][month], year_buffer);
 	
 	text_layer_set_text(day_layer, day_buffer);
 	text_layer_set_text(month_layer, month_buffer);
@@ -377,6 +389,8 @@ void tick_handler(struct tm *t, TimeUnits units_changed){
 }
 
 void initial_tick_handler(struct tm *t){
+	static char year_buffer[] = "'01";
+	
 	minute = t->tm_min;
 	if(clock_is_24h_style()){
 		strftime(hourBuffer, sizeof(hourBuffer), "%H", t);
@@ -384,10 +398,15 @@ void initial_tick_handler(struct tm *t){
 	else{
 		strftime(hourBuffer,sizeof(hourBuffer),"%I", t);
 	}
-	text_layer_set_text(hour_layer, hourBuffer);
+	int day = t->tm_wday;
+	snprintf(day_buffer, sizeof(day_buffer), "%s", days[settings.lang][day]);
 	
-	strftime(day_buffer, sizeof(day_buffer), "%A", t);
-	strftime(month_buffer, sizeof(month_buffer), "%d %B '%y", t);
+	int daym = t->tm_mday;
+	int month = t->tm_mon;
+	
+	strftime(year_buffer, sizeof(year_buffer), "'%y", t);
+	
+	snprintf(month_buffer, sizeof(month_buffer), "%d %s. %s", daym, months[settings.lang][month], year_buffer);
 	
 	text_layer_set_text(day_layer, day_buffer);
 	text_layer_set_text(month_layer, month_buffer);
@@ -678,6 +697,8 @@ void init(){
 	
 	int value = persist_read_data(SETTINGS_KEY, &settings, sizeof(settings));
 	APP_LOG(APP_LOG_LEVEL_INFO, "%d bytes read from settings", value);
+	
+	settings.lang = 0;
 	
 	impact = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_IMPACT_35));	
 	window_stack_push(window, true);
