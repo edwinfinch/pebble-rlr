@@ -2,6 +2,7 @@
 #include "elements.h"
 void bt_handler(bool connected);
 void battery_handler(BatteryChargeState batt_charge);
+void update_inverter_layer();
 
 static TextLayer* text_layer_init(GRect location, GColor background, GTextAlignment alignment, int font)
 {
@@ -24,15 +25,23 @@ static TextLayer* text_layer_init(GRect location, GColor background, GTextAlignm
 	return layer;
 }
 
-void refresh_settings(){
-	layer_set_hidden(inverter_layer_get_layer(theme), settings.theme);
-	layer_set_hidden(text_layer_get_layer(actual_minute), settings.showactualmin);
-	layer_set_hidden(bitmap_layer_get_layer(bt_icon_layer), settings.bticonhide);
-	layer_mark_dirty(battery_lines_layer);
-	layer_mark_dirty(bluetooth_circle_layer);
-	
-	if(settings.covernumbers == 0){
+void update_style(){
+	if(settings.cleanerlook){
+		hlg_height = 70;
+		hlg_location = 32;
+		settings.covernumbers = 0;
+	}
+	else{
+		hlg_height = 94;
+		hlg_location = 8;
+		settings.covernumbers = settings.cover_nums_backup;
+	}
+}
+
+void update_layers_layering(){
+	if(settings.covernumbers == 0 && settings.cleanerlook != 1){
 		layer_add_child(window_get_root_layer(window), inverter_layer_get_layer(highlighter));
+		layer_add_child(window_get_root_layer(window), text_layer_get_layer(update_at_a_glance));
 		layer_set_hidden(text_layer_get_layer(min_des_1), false);
 		layer_set_hidden(text_layer_get_layer(min_des_2), false);
 		layer_set_hidden(text_layer_get_layer(min_des_3), false);
@@ -40,6 +49,22 @@ void refresh_settings(){
 		layer_add_child(window_get_root_layer(window), text_layer_get_layer(min_des_2));
 		layer_add_child(window_get_root_layer(window), text_layer_get_layer(min_des_3));
 		layer_add_child(window_get_root_layer(window), inverter_layer_get_layer(theme));
+	}
+}
+
+void refresh_settings(int basic){
+	layer_set_hidden(inverter_layer_get_layer(theme), settings.theme);
+	layer_set_hidden(text_layer_get_layer(actual_minute), settings.showactualmin);
+	layer_set_hidden(bitmap_layer_get_layer(bt_icon_layer), settings.bticonhide);
+	layer_mark_dirty(battery_lines_layer);
+	layer_mark_dirty(bluetooth_circle_layer);
+	layer_mark_dirty(fix_pixels_layer);
+	
+	if(basic == 0){
+		//Must refresh incase of cleaner look being enabled.
+		update_inverter_layer();
+
+		update_layers_layering();
 	}
 }
 
@@ -109,6 +134,8 @@ void process_tuple(Tuple *t)
 	  	break;
 	  case COVERTEXT_KEY:
 	  	settings.covernumbers = value;
+	  	//Backup incase of change between styles.
+	  	settings.cover_nums_backup = value;
 	  	break;
 	  case BTDISALERT_KEY:
 	 	settings.btdisalert = value;
@@ -116,7 +143,7 @@ void process_tuple(Tuple *t)
 	  case BTREALERT_KEY:
 	  	settings.btrealert = value;
 	  	glance_this("Settings updated.", 1, 2, 5000, 0);
-	  	refresh_settings();
+	  	refresh_settings(0);
 	  	break;
 	  case BATTERYBARSTYLE_KEY:
 	  	settings.batterybarstyle = value;
@@ -143,6 +170,9 @@ void process_tuple(Tuple *t)
 	  case LANGUAGE_KEY:
 	  	settings.lang = value;
 	  	break;
+	  case CLEANERLOOK_KEY:
+	  	settings.cleanerlook = value;
+	  	break;
   }
 }
 
@@ -165,17 +195,6 @@ static void in_received_handler(DictionaryIterator *iter, void *context)
 	}
 }
 
-void pixel_build_callback(void *data){
-	stage++;
-	layer_mark_dirty(fix_pixels_layer);
-	if(stage == 4){
-		pixel_build_timer = app_timer_register(1000, pixel_build_callback, NULL);
-	}
-	else{
-		pixel_build_timer = app_timer_register(200, pixel_build_callback, NULL);
-	}
-}
-
 void update_min_text(){
 	snprintf(minute_buffer, sizeof(minute_buffer), "%d", minute);
 	text_layer_set_text(actual_minute, minute_buffer);
@@ -187,7 +206,7 @@ void update_min_text(){
 void update_highlighter_location(){
 	update_min_text();
 	int grectminfix = 17+(10*(placements[minute]));
-	inverter_layer_location = GRect(grectminfix, 8, 12, 94);
+	inverter_layer_location = GRect(grectminfix, hlg_location, 12, hlg_height);
 	int grectprevfix;
 	if(minute % 10 != 0){
 		grectprevfix = grectminfix-10;
@@ -195,30 +214,16 @@ void update_highlighter_location(){
 	else{
 		grectprevfix = 107;
 	}
-	GRect previous_location = GRect(grectprevfix, 8, 12, 94);
-	GRect forward1 = GRect(grectminfix+6, 8, 12, 94);
-	GRect previous2 = GRect(grectprevfix-6, 8, 12, 94);
-	GRect previous_location_tl = GRect(grectprevfix, 32, 12, 94);
-	GRect forward1_tl = GRect(grectminfix+6, 32, 12, 94);
-	GRect previous2_tl = GRect(grectprevfix-6, 32, 12, 94);
-	GRect inverter_layer_location_tl = GRect(grectminfix, 32, 12, 94);
+	GRect previous_location = GRect(grectprevfix, hlg_location, 12, hlg_height);
+	GRect forward1 = GRect(grectminfix+6, hlg_location, 12, hlg_height);
+	GRect previous2 = GRect(grectprevfix-6, hlg_location, 12, hlg_height);
+	GRect previous_location_tl = GRect(grectprevfix, 32, 12, hlg_height);
+	GRect forward1_tl = GRect(grectminfix+6, 32, 12, hlg_height);
+	GRect previous2_tl = GRect(grectprevfix-6, 32, 12, hlg_height);
+	GRect inverter_layer_location_tl = GRect(grectminfix, 32, 12, hlg_height);
 	if(animbooted == 1){
 		if(minute % 10 != 0){
 			if(minute != 11 && minute != 21 && minute != 31 && minute != 41 && minute != 51 && minute != 1){
-				/*
-				 * Never forget
-				 *
-				if(minute == 11 || minute == 21 || minute == 31 || minute == 41 || minute == 51 || minute == 1){
-					stage = 0;
-					bridge_is_right = 0;
-					pixel_build_timer = app_timer_register(50, pixel_build_callback, NULL);
-				}
-				else if(minute == 9 || minute == 19 || minute == 29 || minute == 39 || minute == 49){
-					stage = 0;
-					bridge_is_right = 1;
-					pixel_build_timer = app_timer_register(50, pixel_build_callback, NULL);
-				}
-				*/
 				animate_layer(text_layer_get_layer(actual_minute), &previous_location_tl, &forward1_tl, 700, 10);
 				animate_layer(text_layer_get_layer(actual_minute), &forward1_tl, &previous2_tl, 700, 710);
 				animate_layer(text_layer_get_layer(actual_minute), &previous2_tl, &inverter_layer_location_tl, 700, 1420);
@@ -245,22 +250,14 @@ void update_inverter_layer(){
 	inverter_layer_destroy(highlighter);
 	text_layer_destroy(actual_minute);
 	int grectminfix = 17+(10*(placements[minute]));
-	inverter_layer_location = GRect(grectminfix, 8, 12, 94);
+	inverter_layer_location = GRect(grectminfix, hlg_location, 12, hlg_height);
 	highlighter = inverter_layer_create(inverter_layer_location);
-	actual_minute = text_layer_init(GRect(grectminfix, 32, 12, 94), GColorClear, GTextAlignmentCenter, 5);
+	actual_minute = text_layer_init(GRect(grectminfix, 32, 12, hlg_height), GColorClear, GTextAlignmentCenter, 5);
 	text_layer_set_text_color(actual_minute, GColorBlack);
 	layer_add_child(window_get_root_layer(window), text_layer_get_layer(actual_minute));
 	update_min_text();
 	layer_add_child(window_get_root_layer(window), inverter_layer_get_layer(highlighter));
-	if(settings.covernumbers == 0){
-		layer_set_hidden(text_layer_get_layer(min_des_1), false);
-		layer_set_hidden(text_layer_get_layer(min_des_2), false);
-		layer_set_hidden(text_layer_get_layer(min_des_3), false);
-		layer_add_child(window_get_root_layer(window), text_layer_get_layer(min_des_1));
-		layer_add_child(window_get_root_layer(window), text_layer_get_layer(min_des_2));
-		layer_add_child(window_get_root_layer(window), text_layer_get_layer(min_des_3));
-		layer_add_child(window_get_root_layer(window), inverter_layer_get_layer(theme));
-	}
+	update_layers_layering();
 }
 
 int get_range_num(){
@@ -381,11 +378,10 @@ void tick_handler(struct tm *t, TimeUnits units_changed){
 	update_highlighter_location();
 	int range = get_range_num();
 	update_range_numbers(range);
-	if(settings.covernumbers){
+	if(settings.covernumbers && settings.cleanerlook == 0){
 		hide_colliding_layers();
 	}
-	layer_mark_dirty(fix_pixels_layer);
-	refresh_settings();
+	refresh_settings(1);
 }
 
 void initial_tick_handler(struct tm *t){
@@ -410,13 +406,14 @@ void initial_tick_handler(struct tm *t){
 	
 	text_layer_set_text(day_layer, day_buffer);
 	text_layer_set_text(month_layer, month_buffer);
+	text_layer_set_text(hour_layer, hourBuffer);
 	update_inverter_layer();
 	int range = get_range_num();
 	update_range_numbers(range);
-	if(settings.covernumbers){
+	if(settings.covernumbers && settings.cleanerlook == 0){
 		hide_colliding_layers();
 	}
-	layer_mark_dirty(fix_pixels_layer);
+	refresh_settings(0);
 	boot = 1;
 }
 	
@@ -483,63 +480,17 @@ void update_proc_battery(Layer *layer, GContext *ctx){
 
 void pixels_proc(Layer *layer, GContext *ctx){
 	graphics_context_set_stroke_color(ctx, GColorBlack);
-	if(stage == 0){
-		if(minute % 10 == 0 || minute == 0){
-			graphics_draw_line(ctx, GPoint(17, 102), GPoint(19, 102));
-			graphics_draw_pixel(ctx, GPoint(17, 103));
-		}
-		else{
-			//Remove everything
-		}
+	if(minute % 10 == 0 || minute == 0){
+		graphics_draw_line(ctx, GPoint(17, 102), GPoint(19, 102));
+		graphics_draw_pixel(ctx, GPoint(17, 103));
 	}
-	/*
-	 * #NeverForget
 	else{
-		int pixel_1, pixel_2, pixel_3;
-		if(bridge_is_right){
-			pixel_1 = 124;
-			pixel_2 = 125;
-			pixel_3 = 126;
-		}
-		else{
-			pixel_1 = 17;
-			pixel_2 = 18;
-			pixel_3 = 19;
-		}
-		if(stage < 5){
-			graphics_context_set_stroke_color(ctx, GColorBlack);
-		}
-		else if(stage > 4){
-			graphics_context_set_stroke_color(ctx, GColorWhite);
-		}
-		switch(stage){
-			case 1:
-				graphics_draw_pixel(ctx, GPoint(pixel_1, 102));
-				break;
-			case 2:
-				graphics_draw_pixel(ctx, GPoint(pixel_2, 102));
-				break;
-			case 3:
-				graphics_draw_pixel(ctx, GPoint(pixel_3, 102));
-				break;
-			case 4:
-				graphics_draw_pixel(ctx, GPoint(pixel_1, 103));
-				break;
-			case 5:
-				graphics_draw_pixel(ctx, GPoint(pixel_1, 102));
-				break;
-			case 6:
-				graphics_draw_pixel(ctx, GPoint(pixel_2, 102));
-				break;
-			case 7:
-				graphics_draw_pixel(ctx, GPoint(pixel_3, 102));
-				break;
-			case 8:
-				graphics_draw_pixel(ctx, GPoint(pixel_1, 103));
-				break;
-		}
+		//Remove everything
 	}
-	*/
+	//Unless the "Cleaner look" is enabled.
+	if(settings.cleanerlook){
+			graphics_draw_line(ctx, GPoint(3, 31), GPoint(140, 31));
+	}
 }
 	
 void window_load(Window *main){
@@ -608,8 +559,6 @@ void window_load(Window *main){
 	actual_minute = text_layer_init(GRect(-20, 15, 144, 168), GColorClear, GTextAlignmentCenter, 1);
 	text_layer_set_text_color(actual_minute, GColorBlack); //GG WP NO RE
 	layer_add_child(window_layer, text_layer_get_layer(actual_minute));
-	
-	refresh_settings();
 	
 	struct tm *t;
   	time_t temp;        
@@ -694,11 +643,24 @@ void init(){
 	app_message_open(512, 258);
 	app_message_register_inbox_received(in_received_handler);
 	
+	if(persist_exists(SETTINGS_KEY)){
+		int value = persist_read_data(SETTINGS_KEY, &settings, sizeof(settings));
+		APP_LOG(APP_LOG_LEVEL_INFO, "%d bytes read from settings", value);
+	}
+	else{
+		//Are you happy, Philipp? You got your defaults.
+		settings.bticonhide = 0;
+		settings.covernumbers = 1;
+		settings.btdisalert = 1;
+		settings.btrealert = 0;
+		settings.theme = 1;
+		settings.showactualmin = 1;
+		settings.batterybarstyle = 0;
+		settings.lang = 0;
+		settings.cleanerlook = 1;
+	}
 	
-	int value = persist_read_data(SETTINGS_KEY, &settings, sizeof(settings));
-	APP_LOG(APP_LOG_LEVEL_INFO, "%d bytes read from settings", value);
-	
-	settings.lang = 0;
+	update_style();
 	
 	impact = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_IMPACT_35));	
 	window_stack_push(window, true);

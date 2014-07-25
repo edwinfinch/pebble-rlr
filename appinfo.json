@@ -57,7 +57,7 @@
     "shortName": "RLR",
     "uuid": "31c2b740-69ae-483c-936c-5bdb4b5f2cad",
     "versionCode": 1,
-    "versionLabel": "1.1.0-b1_beta",
+    "versionLabel": "1.1.0-b6-rls",
     "watchapp": {
         "watchface": true
     }

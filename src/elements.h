@@ -15,16 +15,14 @@ InverterLayer *highlighter, *theme;
 
 GFont *impact;
 
-AppTimer *charge_timer, *pixel_build_timer;
+AppTimer *charge_timer;
 
 char hourBuffer[] = "12";
 char day_buffer[] = "Wednesday.";
 char month_buffer[] = "26.Sept. '14.";
 char minute_buffer[] = "00";
 
-int stage;
 bool cancelled = 0;
-bool bridge_is_right;
 bool invert = 0;
 bool animbooted = 0;
 int placements[60] = {
@@ -48,6 +46,10 @@ int des_3_p_h[6] = {
 int battery_percent = 10;
 bool phone_is_connected = 0;
 
+//These variables are crucial to the highlighter bar.
+int hlg_height = 94;
+int hlg_location = 8;
+
 GRect inverter_layer_location;
 
 typedef struct persist {
@@ -60,6 +62,7 @@ typedef struct persist {
 	bool batterybarstyle;
 	uint8_t lang;
 	bool cleanerlook;
+	bool cover_nums_backup;
 }persist;
 
 persist settings = {
@@ -72,9 +75,9 @@ persist settings = {
 	.batterybarstyle = 0,
 	.lang = 0,
 	.cleanerlook = 0,
+	.cover_nums_backup = 0,
 };
 
-//Glance values, I think?
 int persistvalue;
 int currentAppVer = 4;
 bool currentlyGlancing = 0;
@@ -112,7 +115,7 @@ char *days[2][7] = {
 #define BATTERYBARSTYLE_KEY 7
 #define SHOWMINUTE_KEY 8
 #define LANGUAGE_KEY 9
-#define CLEARNERLOOK_KEY 10
+#define CLEANERLOOK_KEY 10
 
 /*
 GRect locations[10] = {
