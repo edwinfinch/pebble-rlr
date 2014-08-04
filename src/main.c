@@ -660,9 +660,6 @@ void init(){
 		settings.cleanerlook = 1;
 	}
 	
-	settings.lang = 1;
-	settings.cleanerlook = 1;
-	
 	update_style();
 	
 	impact = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_IMPACT_35));	
