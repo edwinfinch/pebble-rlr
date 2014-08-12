@@ -101,7 +101,7 @@ char *days[2][7] = {
 		"Sunday", "Monday", "Tuesday", "Wed.", "Thursday", "Friday", "Saturday",
 	},
 	{
-		"Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag",
+		"Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerst.", "Freitag", "Samstag",
 	},
 };
 

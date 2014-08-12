@@ -523,26 +523,26 @@ void window_load(Window *main){
 	layer_set_update_proc(fix_pixels_layer, pixels_proc);
 	layer_add_child(window_layer, fix_pixels_layer);
 	
-	hour_layer = text_layer_init(GRect(-36, 103, 144, 168), GColorClear, GTextAlignmentCenter, 1);
+	hour_layer = text_layer_init(GRect(-34, 100, 144, 168), GColorClear, GTextAlignmentCenter, 1);
 	layer_add_child(window_layer, text_layer_get_layer(hour_layer));
 	
 	inverter_layer_location = GRect(11, 2, 12, 99);
 	highlighter = inverter_layer_create(inverter_layer_location);
 	layer_add_child(window_layer, inverter_layer_get_layer(highlighter));
 	
-	min_des_1 = text_layer_init(GRect(-50, 10, 144, 168), GColorClear, GTextAlignmentCenter, 2);
+	min_des_1 = text_layer_init(GRect(-50, 8, 144, 168), GColorClear, GTextAlignmentCenter, 2);
 	text_layer_set_text_color(min_des_1, GColorBlack);
 	layer_add_child(window_layer, text_layer_get_layer(min_des_1));
 	
-	min_des_2 = text_layer_init(GRect(0, 10, 144, 168), GColorClear, GTextAlignmentCenter, 2);
+	min_des_2 = text_layer_init(GRect(0, 8, 144, 168), GColorClear, GTextAlignmentCenter, 2);
 	text_layer_set_text_color(min_des_2, GColorBlack);
 	layer_add_child(window_layer, text_layer_get_layer(min_des_2));
 	
-	min_des_3 = text_layer_init(GRect(50, 10, 144, 168), GColorClear, GTextAlignmentCenter, 2);
+	min_des_3 = text_layer_init(GRect(50, 8, 144, 168), GColorClear, GTextAlignmentCenter, 2);
 	text_layer_set_text_color(min_des_3, GColorBlack);
 	layer_add_child(window_layer, text_layer_get_layer(min_des_3));
 	
-	day_layer = text_layer_init(GRect(64, 102, 144, 168), GColorClear, GTextAlignmentLeft, 3);
+	day_layer = text_layer_init(GRect(20, 102, 144, 168), GColorClear, GTextAlignmentCenter, 3);
 	layer_add_child(window_layer, text_layer_get_layer(day_layer));
 	
 	month_layer = text_layer_init(GRect(21, 120, 144, 168), GColorClear, GTextAlignmentCenter, 3);
@@ -667,7 +667,7 @@ void init(){
 	
 	update_style();
 	
-	impact = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_IMPACT_35));	
+	impact = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_IMPACT_38));	
 	window_stack_push(window, true);
 }
 
