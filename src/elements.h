@@ -79,7 +79,7 @@ persist settings = {
 };
 
 int persistvalue;
-int currentAppVer = 4;
+int currentAppVer = 5;
 bool currentlyGlancing = 0;
 int versionChecked = 0;
 GRect finish01, start02;
@@ -105,6 +105,24 @@ char *days[2][7] = {
 	},
 };
 
+#define SETTINGS_UPDATED 0
+#define WF_OUT_OF_DATE 1
+#define BETA_TESTER 2
+#define DISCONNECTED 3
+#define RECONNECTED 4
+
+char *glance_text[2][10] = {
+	{
+		"Settings updated.", "Watchface version out of date! Unload watchface and load again from the appstore or MyPebbleFaces to update. The new version contains new features and bug fixes.",
+		"Hello beta tester :)", "Bluetooth disconnected.", "Bluetooth reconnected."
+	},
+		//German
+	{
+		"Aktualisiert.", "Ziffer Version veraltet! Ziffer entladen und laden Sie wieder aus dem App Store oder MyPebbleFaces zu aktualisieren. Die neue Version enthält neue Funktionen und Fehlerbehebungen.",
+		"Hallo Tester :)", "Bluetooth getrennt.", "Bluetooth verbunden."
+	},
+};
+
 #define HIDEBATTERY_KEY 0
 #define HIDEBTICON_KEY 1
 #define THEME_KEY 2
@@ -116,10 +134,3 @@ char *days[2][7] = {
 #define SHOWMINUTE_KEY 8
 #define LANGUAGE_KEY 9
 #define CLEANERLOOK_KEY 10
-
-/*
-GRect locations[10] = {
-	GRect(11, 2, 12, 99), GRect(21, 2, 12, 99), GRect(31, 2, 12, 99), GRect(41, 2, 12, 99), GRect(51, 2, 12, 99),
-	GRect(61, 2, 12, 99), GRect(71, 2, 12, 99), GRect(81, 2, 12, 99), GRect(91, 2, 12, 99), GRect(101, 2, 12, 99),
-};
-*/

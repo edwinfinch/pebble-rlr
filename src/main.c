@@ -88,7 +88,11 @@ void animate_layer(Layer *layer, GRect *start, GRect *finish, int duration, int 
     animation_schedule((Animation*) anim);
 }
 
-void glance_this(const char *glancetext, bool vibrate, int vibrateNum, int animationLength, int fullNotify){
+void glance_this(int8_t glancetext, bool vibrate, int vibrateNum, int animationLength, int fullNotify){
+		/*
+		As of 1.2 direct injection of characters are no longer supported. This is to
+		support multiple languages.
+		*/
 			if(vibrate == true){
 				if(vibrateNum == 1){
 					vibes_short_pulse();
@@ -100,7 +104,8 @@ void glance_this(const char *glancetext, bool vibrate, int vibrateNum, int anima
 					vibes_long_pulse();
 		        }
 			}
-			snprintf(glance_buffer, sizeof(glance_buffer), "%s", glancetext);
+			
+			snprintf(glance_buffer, sizeof(glance_buffer), "%s", glance_text[settings.lang][glancetext]);
 			text_layer_set_text(update_at_a_glance, glance_buffer);
 				GRect start01 = GRect(0, 300, 144, 168);
 				GRect finish02 = GRect(0, 300, 144, 168);
@@ -142,7 +147,7 @@ void process_tuple(Tuple *t)
 	  	break;
 	  case BTREALERT_KEY:
 	  	settings.btrealert = value;
-	  	glance_this("Settings updated.", 1, 2, 5000, 0);
+	  	glance_this(SETTINGS_UPDATED, 1, 2, 5000, 0);
 	  	refresh_settings(0);
 	  	break;
 	  case BATTERYBARSTYLE_KEY:
@@ -155,14 +160,14 @@ void process_tuple(Tuple *t)
 	  	if(versionChecked == 0){
 				if(value > currentAppVer){
 					APP_LOG(APP_LOG_LEVEL_WARNING, "Watchapp version outdated");
-					glance_this("Watchface version out of date! Unload watchface and load again from the appstore or MyPebbleFaces to update. The new version contains new features and bug fixes.", 1, 3, 15000, 1);
+					glance_this(WF_OUT_OF_DATE, 1, 3, 15000, 1);
 				}
 				else if(value == currentAppVer){
 					APP_LOG(APP_LOG_LEVEL_INFO, "Watchapp version the same as API");
 				}
 				else if(value < currentAppVer){
 					APP_LOG(APP_LOG_LEVEL_INFO, "Watchapp version ahead of API! You must be an eleet 1337 hax0r.");
-					glance_this("Hello beta tester :)", 0, 0, 4000, 0);
+					glance_this(BETA_TESTER, 0, 0, 4000, 0);
 				}
 			versionChecked = 1;
 		  }
@@ -585,11 +590,11 @@ void bt_handler(bool connected){
 	if(boot == 1){
 		if(booted == 1){
 			if(settings.btdisalert == 1 && connected == 0){
-				glance_this("Bluetooth disconnected.", 1, 3, 5000, 0);
+				glance_this(DISCONNECTED, 1, 3, 5000, 0);
 			}
 
 			if(settings.btrealert == 1 && connected == 1){
-				glance_this("Bluetooth reconnected.", 1, 2, 5000, 0);
+				glance_this(RECONNECTED, 1, 2, 5000, 0);
 			}
 		}
 		else{
