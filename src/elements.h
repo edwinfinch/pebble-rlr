@@ -106,20 +106,16 @@ char *days[2][7] = {
 };
 
 #define SETTINGS_UPDATED 0
-#define WF_OUT_OF_DATE 1
-#define BETA_TESTER 2
-#define DISCONNECTED 3
-#define RECONNECTED 4
+#define DISCONNECTED 1
+#define RECONNECTED 2
 
 char *glance_text[2][10] = {
 	{
-		"Settings updated.", "Watchface version out of date! Unload watchface and load again from the appstore or MyPebbleFaces to update. The new version contains new features and bug fixes.",
-		"Hello beta tester :)", "Bluetooth disconnected.", "Bluetooth reconnected."
+		"Settings updated.", "Bluetooth disconnected.", "Bluetooth reconnected."
 	},
 		//German
 	{
-		"Aktualisiert.", "Ziffer Version veraltet! Ziffer entladen und laden Sie wieder aus dem App Store oder MyPebbleFaces zu aktualisieren. Die neue Version enthält neue Funktionen und Fehlerbehebungen.",
-		"Hallo Tester :)", "Bluetooth getrennt.", "Bluetooth verbunden."
+		"Aktualisiert.", "Bluetooth getrennt.", "Bluetooth verbunden."
 	},
 };
 
@@ -129,7 +125,6 @@ char *glance_text[2][10] = {
 #define COVERTEXT_KEY 3
 #define BTDISALERT_KEY 4
 #define BTREALERT_KEY 5
-#define WATCHAPPVER_KEY 6
 #define BATTERYBARSTYLE_KEY 7
 #define SHOWMINUTE_KEY 8
 #define LANGUAGE_KEY 9

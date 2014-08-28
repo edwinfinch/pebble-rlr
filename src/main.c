@@ -156,22 +156,6 @@ void process_tuple(Tuple *t)
 	  case SHOWMINUTE_KEY:
 	  	settings.showactualmin = value;
 	  	break;
-	  case WATCHAPPVER_KEY:
-	  	if(versionChecked == 0){
-				if(value > currentAppVer){
-					APP_LOG(APP_LOG_LEVEL_WARNING, "Watchapp version outdated");
-					glance_this(WF_OUT_OF_DATE, 1, 3, 15000, 1);
-				}
-				else if(value == currentAppVer){
-					APP_LOG(APP_LOG_LEVEL_INFO, "Watchapp version the same as API");
-				}
-				else if(value < currentAppVer){
-					APP_LOG(APP_LOG_LEVEL_INFO, "Watchapp version ahead of API! You must be an eleet 1337 hax0r.");
-					glance_this(BETA_TESTER, 0, 0, 4000, 0);
-				}
-			versionChecked = 1;
-		  }
-	  	break;
 	  case LANGUAGE_KEY:
 	  	settings.lang = value;
 	  	break;
